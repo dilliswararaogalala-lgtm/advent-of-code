@@ -1,48 +1,57 @@
-const wiresDirection = Deno.readTextFileSync("crossed_wires.txt");
+//const wiresDirection = Deno.readTextFileSync("crossed_wires.txt");
 
+const wiresDirection = "R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83"
 const directions = wiresDirection.split(/\n/).map((x) => x.split(","));
 
 const moveRight = (instruction, path, coordinates) => {
-  let { x, y } = coordinates;
+  let { x, y , steps} = coordinates;
   const moves = parseInt(instruction.slice(1));
-  for (let i = 1; i <= moves; i++) {
+  for (let i = 0; i < moves; i++) {
     x += 1;
-    path[[x, y]] = [x, y];
+    steps += 1
+    path[[x, y]] = steps + 1;
   }
   coordinates.x = x;
+  coordinates.steps = steps;
   return path;
 };
 
 const moveLeft = (instruction, path, coordinates) => {
-  let { x, y } = coordinates;
+  let { x, y , steps} = coordinates;
   const moves = parseInt(instruction.slice(1));
-  for (let i = 1; i <= moves; i++) {
+  for (let i = 0; i < moves; i++) {
     x -= 1;
-    path[[x, y]] = [x, y];
+    steps += 1
+    path[[x, y]] = steps;
   }
   coordinates.x = x;
+  coordinates.steps = steps
   return path;
 };
 
 const moveup = (instruction, path, coordinates) => {
-  let { x, y } = coordinates;
+  let { x, y, steps } = coordinates;
   const moves = parseInt(instruction.slice(1));
-  for (let i = 1; i <= moves; i++) {
+  for (let i = 0; i < moves; i++) {
     y += 1;
-    path[[x, y]] = [x, y];
+    steps += 1
+    path[[x, y]] = steps;
   }
   coordinates.y = y;
+  coordinates.steps = steps;
   return path;
 };
 
 const moveDown = (instruction, path, coordinates) => {
-  let { x, y } = coordinates;
+  let { x, y ,steps } = coordinates;
   const moves = parseInt(instruction.slice(1));
-  for (let i = 1; i <= moves; i++) {
+  for (let i = 0; i < moves; i++) {
     y -= 1;
-    path[[x, y]] = [x, y];
+    steps += 1
+    path[[x, y]] = steps + 1;
   }
   coordinates.y = y;
+  coordinates.steps = steps;
   return path;
 };
 
@@ -83,5 +92,6 @@ const calculateDistance = ([x, y]) => {
   return Math.abs(0 - x) + Math.abs(0 - y);
 };
 
-const wirePaths = getWirePaths(directions, { x: 0, y: 0 });
-console.log(Math.min(...getIntersections(wirePaths).map((x) => calculateDistance(x))));
+const wirePaths = getWirePaths(directions, { x: 0, y: 0, steps: 1 });
+//console.log(Math.min(...getIntersections(wirePaths).map((x) => calculateDistance(x))));
+console.log(wirePaths);
