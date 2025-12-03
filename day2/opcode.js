@@ -1,7 +1,7 @@
 const input = Deno.readTextFileSync("opcode.txt");
-const opcode = input;
+const inputCode = input;
 
-const code = opcode.split(/,/).map((x) => parseInt(x));
+const code = inputCode.split(/,/).map((x) => parseInt(x));
 
 const mul = (x, y) => x * y;
 const add = (x, y) => x + y;
