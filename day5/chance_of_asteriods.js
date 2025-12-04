@@ -1,6 +1,7 @@
 const mul = (x, y) => x * y;
 const add = (x, y) => x + y;
 const isEqual = (x, y) => x === y ? 1 : 0;
+const isLessThan = (x, y) => x < y ? 1 : 0;
 
 const dbg = (x) => {
   console.log(x);
@@ -55,6 +56,7 @@ const operations = {
   2: performOperation(mul),
   3: takeInput,
   4: showValue,
+  7: performOperation(isLessThan),
   8: performOperation(isEqual),
   99: halt,
 };
@@ -80,5 +82,5 @@ const excuteIntcode = (instructions) => {
 //   /,/,
 // );
 
-const instructions = "3,9,8,9,10,9,4,9,99,-1,8".split(/,/)
+const instructions = "3,9,7,9,10,9,4,9,99,-1,8".split(/,/)
 excuteIntcode(instructions);
