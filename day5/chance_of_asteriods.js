@@ -1,22 +1,23 @@
 const mul = (x, y) => x * y;
 const add = (x, y) => x + y;
+const isEqual = (x, y) => x === y ? 1 : 0;
 
 const dbg = (x) => {
   console.log(x);
   return x;
 };
 
-const addressMode = (code, i) => {
+const positionMode = (code, i) => {
   return code[code[i]];
 };
 
-const imediateMode = (code, i) => {
+const immediateMode = (code, i) => {
   return code[i];
 };
 
 const parameters = {
-  0: addressMode,
-  1: imediateMode,
+  0: positionMode,
+  1: immediateMode,
 };
 
 const performOperation = (operation) => (code, i, instWithPara) => {
@@ -54,6 +55,7 @@ const operations = {
   2: performOperation(mul),
   3: takeInput,
   4: showValue,
+  8: performOperation(isEqual),
   99: halt,
 };
 
@@ -68,12 +70,15 @@ const executeValidInst = (instruction, intcode, index) => {
 
 const excuteIntcode = (instructions) => {
   let i = 0;
-  while(i < instructions.length && instructions[i] !== '99'){
+  while (i < instructions.length && instructions[i] !== "99") {
     i = executeValidInst(instructions[i], instructions, i);
   }
   return instructions;
 };
 
-const instructions = Deno.readTextFileSync("chance_of_asteriods.txt").split(/,/);
-excuteIntcode(instructions);
+// const instructions = Deno.readTextFileSync("chance_of_asteriods.txt").split(
+//   /,/,
+// );
 
+const instructions = "3,9,8,9,10,9,4,9,99,-1,8".split(/,/)
+excuteIntcode(instructions);
