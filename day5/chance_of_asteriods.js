@@ -66,7 +66,7 @@ const executeValidInst = (instruction, intcode, index) => {
   return index;
 };
 
-const executeInstructions = (instructions) => {
+const excuteIntcode = (instructions) => {
   let i = 0;
   while(i < instructions.length && instructions[i] !== '99'){
     i = executeValidInst(instructions[i], instructions, i);
@@ -75,5 +75,5 @@ const executeInstructions = (instructions) => {
 };
 
 const instructions = Deno.readTextFileSync("chance_of_asteriods.txt").split(/,/);
-executeInstructions(instructions);
+excuteIntcode(instructions);
 
