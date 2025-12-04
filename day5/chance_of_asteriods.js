@@ -51,11 +51,39 @@ const halt = (code) => {
   return code.length;
 };
 
+const jumpIfTrue = (code, i, instWithPara) => {
+  const isParaForInput1 = instWithPara[1] === "0" || instWithPara[1] === "1";
+  const isParaForInput2 = instWithPara[0] === "0" || instWithPara[0] === "1";
+
+  if (isParaForInput1 && isParaForInput2) {
+    const value1 = (parameters[instWithPara[1]](code, i + 1));
+    const value2 = (parameters[instWithPara[0]](code, i + 2));
+    return value1 !== '0' ? +value2 : i + 3 ;
+  }
+
+  return i;
+};
+
+const jumpIfFalse = (code, i, instWithPara) => {
+  const isParaForInput1 = instWithPara[1] === "0" || instWithPara[1] === "1";
+  const isParaForInput2 = instWithPara[0] === "0" || instWithPara[0] === "1";
+
+  if (isParaForInput1 && isParaForInput2) {
+    const value1 = (parameters[instWithPara[1]](code, i + 1));
+    const value2 = (parameters[instWithPara[0]](code, i + 2));
+    return value1 === '0' ? +value2 : i + 3 ;
+  }
+
+  return i;
+};
+
 const operations = {
   1: performOperation(add),
   2: performOperation(mul),
   3: takeInput,
   4: showValue,
+  5: jumpIfTrue,
+  6: jumpIfFalse,
   7: performOperation(isLessThan),
   8: performOperation(isEqual),
   99: halt,
@@ -78,9 +106,9 @@ const excuteIntcode = (instructions) => {
   return instructions;
 };
 
-// const instructions = Deno.readTextFileSync("chance_of_asteriods.txt").split(
-//   /,/,
-// );
+const instructions = Deno.readTextFileSync("chance_of_asteriods.txt").split(
+  /,/,
+);
 
-const instructions = "3,9,7,9,10,9,4,9,99,-1,8".split(/,/)
+// const instructions = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99".split(/,/);
 excuteIntcode(instructions);
