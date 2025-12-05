@@ -16,24 +16,17 @@ const immediateMode = (code, i) => {
   return code[i];
 };
 
-const parameters = {
+const paramtersModes = {
   0: positionMode,
   1: immediateMode,
 };
 
 const performOperation = (operation) => (code, i, instWithPara) => {
-  const isParaForInput1 = instWithPara[1] === "0" || instWithPara[1] === "1";
-  const isParaForInput2 = instWithPara[0] === "0" || instWithPara[0] === "1";
-
-  if (isParaForInput1 && isParaForInput2) {
-    const value1 = parameters[instWithPara[1]](code, i + 1);
-    const value2 = parameters[instWithPara[0]](code, i + 2);
-    const outputIndex = code[i + 3];
-    code[outputIndex] = operation(+value1, +value2).toString();
-    return i + 4;
-  }
-
-  return i;
+  const value1 = paramtersModes[instWithPara[1]](code, i + 1);
+  const value2 = paramtersModes[instWithPara[0]](code, i + 2);
+  const outputIndex = code[i + 3];
+  code[outputIndex] = operation(+value1, +value2).toString();
+  return i + 4;
 };
 
 const takeInput = (code, i) => {
@@ -43,7 +36,7 @@ const takeInput = (code, i) => {
 
 const showValue = (code, i) => {
   const value = code[code[i + 1]];
-  console.log(value);
+  dbg(value);
   return i + 2;
 };
 
@@ -52,29 +45,15 @@ const halt = (code) => {
 };
 
 const jumpIfTrue = (code, i, instWithPara) => {
-  const isParaForInput1 = instWithPara[1] === "0" || instWithPara[1] === "1";
-  const isParaForInput2 = instWithPara[0] === "0" || instWithPara[0] === "1";
-
-  if (isParaForInput1 && isParaForInput2) {
-    const value1 = (parameters[instWithPara[1]](code, i + 1));
-    const value2 = (parameters[instWithPara[0]](code, i + 2));
-    return value1 !== '0' ? +value2 : i + 3 ;
-  }
-
-  return i;
+  const value1 = paramtersModes[instWithPara[1]](code, i + 1);
+  const value2 = paramtersModes[instWithPara[0]](code, i + 2);
+  return value1 !== "0" ? +value2 : i + 3;
 };
 
 const jumpIfFalse = (code, i, instWithPara) => {
-  const isParaForInput1 = instWithPara[1] === "0" || instWithPara[1] === "1";
-  const isParaForInput2 = instWithPara[0] === "0" || instWithPara[0] === "1";
-
-  if (isParaForInput1 && isParaForInput2) {
-    const value1 = (parameters[instWithPara[1]](code, i + 1));
-    const value2 = (parameters[instWithPara[0]](code, i + 2));
-    return value1 === '0' ? +value2 : i + 3 ;
-  }
-
-  return i;
+  const value1 = paramtersModes[instWithPara[1]](code, i + 1);
+  const value2 = paramtersModes[instWithPara[0]](code, i + 2);
+  return value1 === "0" ? +value2 : i + 3;
 };
 
 const operations = {
@@ -92,7 +71,8 @@ const operations = {
 const executeValidInst = (instruction, intcode, index) => {
   const instWithPara = instruction.padStart(4, "0");
   const parsedInst = instWithPara[3];
-  if (parsedInst in operations) {
+
+  if (/010\d|100\d|000\d|110\d/.test(instWithPara)) {
     return operations[parsedInst](intcode, index, instWithPara);
   }
   return index;
