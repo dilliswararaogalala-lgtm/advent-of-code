@@ -1,7 +1,7 @@
 import { permutations } from "jsr:@std/collections";
 
-const mul = (x, y) => x * y;
-const add = (x, y) => x + y;
+const mul = (x, y) => (x * y);
+const add = (x, y) => (x + y);
 const isEqual = (x, y) => x === y ? 1 : 0;
 const isLessThan = (x, y) => x < y ? 1 : 0;
 const dbg = (x) => {
@@ -9,14 +9,12 @@ const dbg = (x) => {
   return x;
 };
 
-const intcodeAmplification = (
-  instructions,
-  shiftingInput,
-  previousOutput,
-  index = 0,
+const amplification = (
+  { program, shiffter, inputIndex, previousOutput, currentIndex, isTheEnd },
 ) => {
-  let output = "";
-  const input = [shiftingInput, previousOutput];
+  let index = inputIndex;
+  const inputs = [shiffter, previousOutput];
+
   const positionMode = (code, i) => {
     return code[code[i]];
   };
@@ -39,13 +37,14 @@ const intcodeAmplification = (
   };
 
   const takeInput = (code, i) => {
-    code[+code[i + 1]] = input[index];
+    code[+code[i + 1]] = inputs[index];
+    //dbg(code[+code[i + 1]])
     index++;
     return i + 2;
   };
 
   const showValue = (code, i) => {
-    output = code[+code[i + 1]];
+    previousOutput = code[+code[i + 1]];
     return i + 2;
   };
 
@@ -62,7 +61,7 @@ const intcodeAmplification = (
   };
 
   const halt = (code) => {
-    return output;
+    return code.length;
   };
 
   const operations = {
@@ -87,32 +86,59 @@ const intcodeAmplification = (
     return index;
   };
 
-  const excuteIntcode = (instructions) => {
-    let i = 0;
-    while (i < instructions.length && instructions[i] !== "99") {
-      i = executeValidInst(instructions[i], instructions, i);
+  const excuteIntcode = (program, currentIndex) => {
+    let i = currentIndex;
+
+    while (i < program.length && program[i] !== "99") {
+      if (program[i] === "4") {
+        currentIndex = executeValidInst(program[i], program, i);
+        return ({ program, shiffter, previousOutput, currentIndex, isTheEnd });
+      }
+      i = executeValidInst(program[i], program, i);
     }
-    return output;
+    isTheEnd = true;
+    currentIndex = i;
+    return ({ program, shiffter, previousOutput, currentIndex, isTheEnd });
   };
 
-  return (excuteIntcode(instructions));
+  return (excuteIntcode(program, currentIndex));
 };
 
-const executeAmplification = (code, combinations) => {
-  const allResults = [];
-  for (let i = 0; i < combinations.length; i++) {
-    let result = 0;
-    for (let j = 0; j < combinations[i].length; j++) {
-      result = intcodeAmplification([...code], combinations[i][j], result);
+const code =  Deno.readTextFileSync("amplifire_circuit.txt").split(/,/);
+
+
+const combinations = permutations(["5", "6", "7", "8", "9"]);
+const allResults = [];
+for (const combination of combinations) {
+  const programs = [[...code], [...code], [...code], [...code], [...code]];
+  let previousOutput = "0";
+  let isTheEnd = false;
+  const indexes = [0, 0, 0, 0, 0];
+  const inputIndex = [0, 0, 0, 0, 0];
+  let result = {};
+
+  while (!isTheEnd) {
+    for (let i = 0; i < combination.length; i++) {
+      const shiffter = combination[i];
+      const program = programs[i];
+      const currentIndex = indexes[i];
+      result = amplification({
+        program,
+        shiffter,
+        previousOutput,
+        currentIndex,
+        inputIndex: inputIndex[i],
+        isTheEnd,
+      });
+      inputIndex[i] = 1;
+      indexes.push(result.currentIndex);
+      previousOutput = (result.previousOutput);
     }
-    allResults.push(result);
+    isTheEnd = result.isTheEnd;
+    indexes.splice(0, 5);
   }
-  return allResults.sort((a, b) => +b - +a)[0];
-};
+  allResults.push(previousOutput);
+}
 
-const combinations = permutations(["0", "1", "2", "3", "4"]);
-const code =
-  "3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0"
-    .split(/,/);
+console.log(allResults.sort((a, b) => +b - +a)[0])
 
-dbg(executeAmplification(code, combinations));
