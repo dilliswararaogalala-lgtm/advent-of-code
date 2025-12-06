@@ -9,9 +9,14 @@ const dbg = (x) => {
   return x;
 };
 
-const intcodeAmplification = (instructions, shiftingInput, previousOutput, index = 0) => {
+const intcodeAmplification = (
+  instructions,
+  shiftingInput,
+  previousOutput,
+  index = 0,
+) => {
   let output = "";
-  const input = [shiftingInput, previousOutput]
+  const input = [shiftingInput, previousOutput];
   const positionMode = (code, i) => {
     return code[code[i]];
   };
@@ -58,7 +63,7 @@ const intcodeAmplification = (instructions, shiftingInput, previousOutput, index
 
   const halt = (code) => {
     return output;
-  }
+  };
 
   const operations = {
     1: performOperation(add),
@@ -69,7 +74,7 @@ const intcodeAmplification = (instructions, shiftingInput, previousOutput, index
     6: jumpIfFalse,
     7: performOperation(isLessThan),
     8: performOperation(isEqual),
-    99: halt
+    99: halt,
   };
 
   const executeValidInst = (instruction, intcode, index) => {
@@ -85,7 +90,7 @@ const intcodeAmplification = (instructions, shiftingInput, previousOutput, index
   const excuteIntcode = (instructions) => {
     let i = 0;
     while (i < instructions.length && instructions[i] !== "99") {
-      i = (executeValidInst(instructions[i], instructions, i));
+      i = executeValidInst(instructions[i], instructions, i);
     }
     return output;
   };
@@ -93,18 +98,21 @@ const intcodeAmplification = (instructions, shiftingInput, previousOutput, index
   return (excuteIntcode(instructions));
 };
 
-const combinations = permutations(["0", "1", "2", "3", "4"]);
-//const combinations = "4,3,2,1,0".split(/,/);
-const allResults = [];
-const code = "3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0".split(/,/);
-for (let i = 0; i < combinations.length; i++) {
-  let result = 0;
-  for (let j = 0; j < combinations[i].length; j++) {
-    result = (intcodeAmplification([...code], combinations[i][j], result));
+const executeAmplification = (code, combinations) => {
+  const allResults = [];
+  for (let i = 0; i < combinations.length; i++) {
+    let result = 0;
+    for (let j = 0; j < combinations[i].length; j++) {
+      result = intcodeAmplification([...code], combinations[i][j], result);
+    }
+    allResults.push(result);
   }
-  allResults.push(result);
-}
+  return allResults.sort((a, b) => +b - +a)[0];
+};
 
-dbg(allResults.sort((a, b) => +b - +a)[0])
+const combinations = permutations(["0", "1", "2", "3", "4"]);
+const code =
+  "3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0"
+    .split(/,/);
 
-
+dbg(executeAmplification(code, combinations));
