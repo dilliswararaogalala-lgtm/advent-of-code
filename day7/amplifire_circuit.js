@@ -106,7 +106,6 @@ const amplification = (
 
 const code =  Deno.readTextFileSync("amplifire_circuit.txt").split(/,/);
 
-
 const combinations = permutations(["5", "6", "7", "8", "9"]);
 const allResults = [];
 for (const combination of combinations) {
@@ -141,4 +140,3 @@ for (const combination of combinations) {
 }
 
 console.log(allResults.sort((a, b) => +b - +a)[0])
-
