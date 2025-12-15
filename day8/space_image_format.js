@@ -31,19 +31,17 @@ console.log(
 );
 
 //part - 1
-
-const occurencesOfAll = (frequencies, layer) => {
+const occurencesOfAll = (layer) => {
   const ocuureces = (frequencyTable, number) => {
     frequencyTable[number] = frequencyTable[number] || 0;
     frequencyTable[number] += 1;
     return frequencyTable;
   };
 
-  frequencies.push(layer.reduce(ocuureces, {}));
-  return frequencies;
+  return layer.reduce(ocuureces, {});
 };
 
-const allFrequencies = chunks.reduce(occurencesOfAll, []);
+const allFrequencies = chunks.map(occurencesOfAll);
 
 const lowestZeroes = allFrequencies
   .filter((object) => object[0])
