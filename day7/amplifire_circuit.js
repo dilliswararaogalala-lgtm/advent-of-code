@@ -139,4 +139,4 @@ for (const combination of combinations) {
   allResults.push(previousOutput);
 }
 
-console.log(allResults.sort((a, b) => +b - +a)[0])
+dbg(allResults.sort((a, b) => +b - +a)[0])

@@ -9,16 +9,24 @@ const dbg = (x) => {
 };
 
 const positionMode = (code, i) => {
-  return code[code[i]];
+  return (code[code[i]]);
 };
 
 const immediateMode = (code, i) => {
-  return code[i];
+  return (code[i]);
+};
+
+let relativeBase = 0;
+
+const relativeMode = (code, i) => {
+  const outputIndex =  +code[i] + relativeBase;
+  return (code[outputIndex]);
 };
 
 const paramtersModes = {
   0: positionMode,
   1: immediateMode,
+  2: relativeMode,
 };
 
 const performOperation = (operation) => (code, i, instWithPara) => {
@@ -28,14 +36,14 @@ const performOperation = (operation) => (code, i, instWithPara) => {
   code[outputIndex] = operation(+value1, +value2).toString();
   return i + 4;
 };
-// 0002
+
 const takeInput = (code, i) => {
   code[code[i + 1]] = prompt("give input value: ");
   return i + 2;
 };
 
-const showValue = (code, i) => {
-  const value = code[code[i + 1]];
+const showValue = (code, i, instWithPara) => {
+  const value = paramtersModes[instWithPara[1]](code, i + 1);
   dbg(value);
   return i + 2;
 };
@@ -56,6 +64,12 @@ const jumpIfFalse = (code, i, instWithPara) => {
   return value1 === "0" ? +value2 : i + 3;
 };
 
+const changeRelativeBase = (code, i, instWithPara) => {
+  const value = paramtersModes[instWithPara[1]](code, i + 1);
+  relativeBase = relativeBase + (+value);
+  return i + 2;
+};
+
 const operations = {
   1: performOperation(add),
   2: performOperation(mul),
@@ -65,6 +79,7 @@ const operations = {
   6: jumpIfFalse,
   7: performOperation(isLessThan),
   8: performOperation(isEqual),
+  9: changeRelativeBase,
   99: halt,
 };
 
@@ -72,7 +87,7 @@ const executeValidInst = (instruction, intcode, index) => {
   const instWithPara = instruction.padStart(4, "0");
   const parsedInst = instWithPara[3];
 
-  if (/010\d|100\d|000\d|110\d/.test(instWithPara)) {
+  if (/010\d|100\d|000\d|110\d|020\d|120\d|200\d|210\d/.test(instWithPara)) {
     return operations[parsedInst](intcode, index, instWithPara);
   }
   return index;
@@ -86,9 +101,12 @@ const excuteIntcode = (instructions) => {
   return instructions;
 };
 
-const instructions = Deno.readTextFileSync("chance_of_asteriods.txt").split(
+const instructions = Deno.readTextFileSync("input.txt").split(
   /,/,
 );
 
-// const instructions = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99".split(/,/);
+// const instructions = "109,1,204,-1,101,100,1,100,1008,100,16,101,1006,101,0,99"
+//   .split(/,/);
+
 excuteIntcode(instructions);
+

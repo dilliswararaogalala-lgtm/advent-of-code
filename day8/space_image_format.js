@@ -9,17 +9,16 @@ const chunks = chunk(imageData, imageSize);
 
 const images = ["◼️", "◻️"];
 
-let i = 0;
+//part-2
 
-const result = [];
-
-for (let j = 0; j < chunks[i].length; j++) {
+const result = chunks[0].reduce((result, _, j) => {
+  let i = 0;
   while (chunks[i][j] === "2") {
     i++;
   }
   result.push(chunks[i][j]);
-  i = 0;
-}
+  return result;
+}, []);
 
 console.log(
   chunk(result, 25)
@@ -31,23 +30,25 @@ console.log(
     ).join("\n"),
 );
 
-// const occurencesOfAll = (frequencies, layer) => {
-//   const ocuureces = (frequencyTable, number) => {
-//     frequencyTable[number] = frequencyTable[number] || 0;
-//     frequencyTable[number] += 1;
-//     return frequencyTable;
-//   };
+//part - 1
 
-//   frequencies.push(layer.reduce(ocuureces, {}));
-//   return frequencies;
-// };
+const occurencesOfAll = (frequencies, layer) => {
+  const ocuureces = (frequencyTable, number) => {
+    frequencyTable[number] = frequencyTable[number] || 0;
+    frequencyTable[number] += 1;
+    return frequencyTable;
+  };
 
-// const allFrequencies = chunks.reduce(occurencesOfAll, []);
+  frequencies.push(layer.reduce(ocuureces, {}));
+  return frequencies;
+};
 
-// const lowestZeroes = allFrequencies
-//   .filter((object) => object[0])
-//   .reduce((min, current) => {
-//     return current[0] < min[0] ? current : min;
-//   });
+const allFrequencies = chunks.reduce(occurencesOfAll, []);
 
-// console.log(lowestZeroes[1] * lowestZeroes[2]);
+const lowestZeroes = allFrequencies
+  .filter((object) => object[0])
+  .reduce((min, current) => {
+    return current[0] < min[0] ? current : min;
+  });
+
+console.log(lowestZeroes[1] * lowestZeroes[2]);
