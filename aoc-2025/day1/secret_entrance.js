@@ -1,21 +1,55 @@
-let value = 40;
+//const puzzleInput = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82";
+const puzzleInput = Deno.readTextFileSync('input.txt')
+const dbg = (x) => {
+  console.log(x);
+  return x;
+};
 
-console.log(Array.from({ length: 30 }, () => {
-  value += 1;
-  return value;
-}));
+const rotateLeft = (noOfRotations, pointer) => {
+  return Array.from(
+    { length: noOfRotations },
+    () => pointer = pointer ? pointer - 1 : 99,
+  );
+};
 
-value = 50;
+const rotateRight = (noOfRotations, pointer) => {
+  return Array.from(
+    { length: noOfRotations },
+    () => pointer = pointer === 99 ? 0 : pointer + 1,
+  );
+};
 
-console.log(Array.from({ length: 68 }, () => {
-  if(value === 0){
-    value = 99;
-    return value;
-  }
-  value -= 1;
-  return value;
-}));
+const perfromRotation = ({ pointer, countOfZeroes }, { direction, moves }) => {
+  const rotation = {
+    L: rotateLeft,
+    R: rotateRight,
+  };
+  const eachSteps = rotation[direction](moves, pointer);
+  pointer = eachSteps[moves - 1];
+  countOfZeroes = pointer === 0 ? countOfZeroes + 1 : countOfZeroes;
+  return { pointer, countOfZeroes };
+};
 
-const inputs = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82"
+const parseDirection = (instruction) => instruction.slice(0, 1);
 
-console.log(inputs.split(/\n/));
+const parseMoves = (instruction) => parseInt(instruction.slice(1));
+
+const parseDirectionAndMoves = (input) => {
+  const direction = parseDirection(input);
+  const moves = parseMoves(input);
+  return { direction, moves };
+};
+
+const parseInputs = (sequenceOfRotations) => {
+  return sequenceOfRotations.map(parseDirectionAndMoves);
+};
+
+const unlockTheLock = (pointer, rotationsSequences) => {
+  const finalPassword =  rotationsSequences.reduce(perfromRotation, {
+    pointer,
+    countOfZeroes: 0,
+  });
+  return finalPassword.countOfZeroes;
+};
+
+dbg(unlockTheLock(50, parseInputs(puzzleInput.split(/\n/))));
