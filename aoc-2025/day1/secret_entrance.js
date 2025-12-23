@@ -24,9 +24,14 @@ const perfromRotation = ({ pointer, countOfZeroes }, { direction, moves }) => {
     L: rotateLeft,
     R: rotateRight,
   };
+
   const eachSteps = rotation[direction](moves, pointer);
+
+  const countZeroes = (count, step) => step === 0 ? count + 1 : count ;
+
   pointer = eachSteps[moves - 1];
-  countOfZeroes = pointer === 0 ? countOfZeroes + 1 : countOfZeroes;
+  countOfZeroes = eachSteps.reduce(countZeroes, countOfZeroes);
+
   return { pointer, countOfZeroes };
 };
 
