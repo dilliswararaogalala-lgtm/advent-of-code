@@ -1,5 +1,6 @@
 //const puzzleInput = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82";
-const puzzleInput = Deno.readTextFileSync('input.txt')
+const puzzleInput = Deno.readTextFileSync('input.txt');
+
 const dbg = (x) => {
   console.log(x);
   return x;
@@ -57,4 +58,6 @@ const unlockTheLock = (pointer, rotationsSequences) => {
   return finalPassword.countOfZeroes;
 };
 
-dbg(unlockTheLock(50, parseInputs(puzzleInput.split(/\n/))));
+const parsedInputs = parseInputs(puzzleInput.split(/\n/));
+
+dbg(unlockTheLock(50, parsedInputs));
