@@ -58,6 +58,6 @@ const unlockTheLock = (pointer, rotationsSequences) => {
   return finalPassword.countOfZeroes;
 };
 
-const parsedInputs = parseInputs(puzzleInput.split(/\n/));
+const listOfRotations = parseInputs(puzzleInput.split(/\n/));
 
-dbg(unlockTheLock(50, parsedInputs));
+dbg(unlockTheLock(50, listOfRotations));
