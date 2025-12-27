@@ -6,13 +6,19 @@ const banks = Deno.readTextFileSync("inputs.txt");
 const batteryBanks = banks.split(/\n/);
 
 const getPossibleJoltage = (totalJoltage, bank) => {
-  let largestJoltage = 0;
-  for (let i = 0; i < bank.length; i++) {
-    for (let j = i + 1; j < bank.length; j++) {
-      const joltage = parseInt(bank[i] + bank[j]);
-      largestJoltage = joltage > largestJoltage ? joltage : largestJoltage;
+
+  const joltages = bank.split('');
+
+  const getLargestJoltage = (largest, charge, index, joltages) => {
+    for(let i = index + 1; i < joltages.length; i++){
+      const joltage = parseInt(charge + joltages[i]);
+      largest = largest < joltage ? joltage : largest;
     }
+
+    return largest;
   }
+
+  const largestJoltage = joltages.reduce(getLargestJoltage, 0)
   return totalJoltage + largestJoltage;
 };
 
