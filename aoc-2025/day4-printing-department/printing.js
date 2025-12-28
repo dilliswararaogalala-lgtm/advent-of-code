@@ -1,9 +1,9 @@
 // const grid =
 //   "..@@.@@@@.\n@@@.@.@.@@\n@@@@@.@.@@\n@.@@@@..@.\n@@.@@@@.@@\n.@@@@@@@.@\n.@.@.@.@@@\n@.@@@.@@@@\n.@@@@@@@@.\n@.@.@@@.@.";
 
-const grid = Deno.readTextFileSync('inputs.txt');
+const grid = Deno.readTextFileSync("inputs.txt");
 
-const rollsOfPapers = grid.split(/\n/).map((x) => x.split(""));
+const paperRolls = grid.split(/\n/).map((x) => x.split(""));
 
 const offsets = {
   "top": [-1, 0],
@@ -16,10 +16,9 @@ const offsets = {
   "bottom-right": [1, 1],
 };
 
-const getTotalAsscebileRolls = (total, _, i, rollsOfPapers) => {
-
+const getTotalAsscessibleRolls = (total, _, i, rollsOfPapers) => {
   const countAsscebileRolls = (total, currentPosition, j) => {
-    if(currentPosition === '.') return total;
+    if (currentPosition === ".") return total;
 
     let count = 0;
     for (const position in offsets) {
@@ -29,14 +28,37 @@ const getTotalAsscebileRolls = (total, _, i, rollsOfPapers) => {
         x >= 0 && y >= 0 && x < rollsOfPapers.length &&
         y < rollsOfPapers[i].length
       ) {
-        count = rollsOfPapers[x][y] === "@" ? count + 1 : count;
+        count = rollsOfPapers[x][y] === "@" || rollsOfPapers[x][y] === "x"
+          ? count + 1
+          : count;
       }
     }
-
-    return count < 4 ? total + 1 : total;
+    if (count < 4) {
+      total += 1;
+      rollsOfPapers[i][j] = "x";
+    }
+    return total;
   };
-  
+
   return rollsOfPapers[i].reduce(countAsscebileRolls, total);
 };
 
-console.log(rollsOfPapers.reduce(getTotalAsscebileRolls, 0));
+
+const countOfRolls = paperRolls.reduce(getTotalAsscessibleRolls, 0);
+const flags = { countOfRolls, total: countOfRolls };
+
+const getAllPossibleRolls = ({ countOfRolls, total }, paperRolls) => {
+  while (countOfRolls > 0) {
+    paperRolls = paperRolls
+      .map((x) => x.join("").replaceAll("x", "."))
+      .map(
+        (x) => x.split(""),
+      );
+    countOfRolls = paperRolls.reduce(getTotalAsscessibleRolls, 0);
+    total += countOfRolls;
+  }
+
+  return total;
+};
+
+console.log(getAllPossibleRolls(flags, [...paperRolls]));
